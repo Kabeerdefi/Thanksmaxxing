@@ -17,8 +17,8 @@ export default defineConfig(({ mode }) => {
       },
       env: {
         ASSETS: bindings.assets(),
-        X_CLIENT_ID: bindings.text(value("X_CLIENT_ID")),
-        X_CALLBACK_URL: bindings.text(value("X_CALLBACK_URL")),
+        X_CLIENT_ID: bindings.secret(),
+        X_CALLBACK_URL: bindings.secret(),
         NEXT_PUBLIC_SITE_URL: bindings.text(value("NEXT_PUBLIC_SITE_URL")),
         X_ATTESTOR_ADDRESS: bindings.text(value("X_ATTESTOR_ADDRESS")),
         X_CLIENT_SECRET: bindings.secret(),
