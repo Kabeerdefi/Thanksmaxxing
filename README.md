@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Thanksmaxxing
 
 A small Base NFT mint for one line of gratitude. Each token stores the text, the authenticated X account's stable numeric ID and username, and its profile image URL onchain. The fixed Thanksgiving 2026 card template is shared by everyone; there is no user image upload.
@@ -35,3 +36,6 @@ Generate a dedicated EIP-712 attestor key with no funds. Put its private key in 
 ## Owner-only functions
 
 The contract owner can transfer or accept ownership, set the mint price, rotate the X attestor, change the metadata base URI, pause, unpause, and withdraw collected ETH. See contracts/README.md for the complete list.
+=======
+# Thanksmaxxing
+>>>>>>> origin/main
