@@ -1,0 +1,30 @@
+import { bindings, defineConfig, defineWorker } from "cf/config";
+import { loadEnv } from "vite";
+
+export default defineConfig(({ mode }) => {
+  const localEnv = loadEnv(mode, process.cwd(), "");
+  const value = (name: string) => process.env[name] ?? localEnv[name] ?? "";
+
+  return {
+    worker: defineWorker({
+      name: "thanksmaxxing",
+      entrypoint: "vinext/server/fetch-handler",
+      compatibilityDate: "2026-11-26",
+      assets: {
+        htmlHandling: "none",
+        notFoundHandling: "none",
+        runWorkerFirst: ["/*", "!/_next/static/*", "!/*/_next/static/*"],
+      },
+      env: {
+        ASSETS: bindings.assets(),
+        X_CLIENT_ID: bindings.text(value("X_CLIENT_ID")),
+        X_CALLBACK_URL: bindings.text(value("X_CALLBACK_URL")),
+        NEXT_PUBLIC_SITE_URL: bindings.text(value("NEXT_PUBLIC_SITE_URL")),
+        X_ATTESTOR_ADDRESS: bindings.text(value("X_ATTESTOR_ADDRESS")),
+        X_CLIENT_SECRET: bindings.secret(),
+        AUTH_COOKIE_SECRET: bindings.secret(),
+        X_ATTESTOR_PRIVATE_KEY: bindings.secret(),
+      },
+    }),
+  };
+});

@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+coverage/
+.env
+.env.*
+!.env.example
+contracts/cache/
+contracts/out/
+contracts/broadcast/
+contracts/lib/
+*.log
+/dist/
+.vinext/
+.cloudflare/
+.dev.vars*
