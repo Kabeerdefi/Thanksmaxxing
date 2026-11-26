@@ -17,6 +17,10 @@ export default defineConfig(({ mode }) => {
       },
       env: {
         ASSETS: bindings.assets(),
+        NEXT_PUBLIC_CHAIN_ID: bindings.text(value("NEXT_PUBLIC_CHAIN_ID")),
+        NEXT_PUBLIC_BASE_RPC_URL: bindings.text(value("NEXT_PUBLIC_BASE_RPC_URL")),
+        NEXT_PUBLIC_CONTRACT_ADDRESS: bindings.text(value("NEXT_PUBLIC_CONTRACT_ADDRESS")),
+        NEXT_PUBLIC_DEPLOYMENT_BLOCK: bindings.text(value("NEXT_PUBLIC_DEPLOYMENT_BLOCK")),
         X_CLIENT_ID: bindings.secret(),
         X_CALLBACK_URL: bindings.secret(),
         NEXT_PUBLIC_SITE_URL: bindings.text(value("NEXT_PUBLIC_SITE_URL")),
