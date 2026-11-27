@@ -75,11 +75,12 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
       }
     }
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const templateResponse = await fetch(new URL("/thanksmaxxing-card-template.png", siteUrl), { cache: "no-store" });
+    const templateResponse = await fetch(new URL("/thanksmaxxing-card-template.webp", siteUrl), { cache: "no-store" });
     if (!templateResponse.ok) throw new Error("Card template not found.");
     const imageData = Buffer.from(await templateResponse.arrayBuffer()).toString("base64");
-    const imageSrc = "data:image/png;base64," + imageData;
-    const messageFontSize = text.length > 55 ? 34 : text.length > 32 ? 42 : 50;
+    const imageSrc = "data:image/webp;base64," + imageData;
+    const textBytes = new TextEncoder().encode(text).length;
+    const messageFontSize = textBytes > 82 ? 29 : textBytes > 58 ? 35 : textBytes > 36 ? 42 : 50;
     const element = createElement(
       "div",
       {
@@ -118,17 +119,15 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
         {
           style: {
             position: "absolute",
-            left: "75px",
-            top: "493px",
-            width: "523px",
-            height: "230px",
+            left: "84px",
+            top: "370px",
+            width: "566px",
+            height: "264px",
             boxSizing: "border-box",
             display: "flex",
-            alignItems: "center",
-            padding: "14px 10px",
-            borderRadius: "12px",
+            alignItems: "flex-start",
+            padding: "12px 10px",
             overflow: "hidden",
-            backgroundColor: "#fff8eb",
           },
         },
         createElement(
@@ -141,7 +140,7 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
               fontWeight: 700,
               fontStyle: "italic",
               lineHeight: 1.03,
-              letterSpacing: "-2px",
+              letterSpacing: "-1.3px",
               overflowWrap: "anywhere",
             },
           },
@@ -153,10 +152,10 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
         {
           style: {
             position: "absolute",
-            left: "103px",
-            top: "975px",
-            width: "237px",
-            height: "74px",
+            left: "90px",
+            top: "1010px",
+            width: "270px",
+            height: "60px",
             boxSizing: "border-box",
             display: "flex",
             alignItems: "center",
@@ -164,7 +163,7 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
             backgroundColor: "#fff8eb",
             color: "#0923ad",
             fontFamily: "Arial, Helvetica, sans-serif",
-            fontSize: "53px",
+            fontSize: "48px",
             fontWeight: 900,
             letterSpacing: "-2px",
           },

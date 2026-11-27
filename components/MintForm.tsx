@@ -183,24 +183,24 @@ export function MintForm() {
   return (
     <section className="mint-section" id="mint">
       <div className="mint-copy">
-        <p className="eyebrow">A small thing. A lasting thing.</p>
+        <p className="eyebrow">Your card starts here</p>
         <h2>What are you grateful for?</h2>
         <p className="section-intro">
-          Connect your wallet and sign into X. Your card can only use the X account you authorize.
+          Sign into X to add your real profile photo, then connect your wallet to mint. Your gratitude is stored on Base; the contract allows one card per wallet and X account.
         </p>
 
         <div className="mint-stats">
           <div><strong>{isConfigured ? mintCount : "—"}</strong><span>cards minted</span></div>
-          <div><strong>{priceLabel}</strong><span>one exact payment</span></div>
+          <div><strong>{priceLabel}</strong><span>one-time mint on Base</span></div>
         </div>
 
         <div className="wallet-panel">
-          <span className="wallet-label">YOUR WALLET</span>
+          <span className="wallet-label">01 · YOUR BASE WALLET</span>
           <WalletButton />
         </div>
 
         <form className="mint-form" onSubmit={submit}>
-          <label>YOUR X ACCOUNT</label>
+          <label>02 · YOUR X ACCOUNT</label>
           {isLoadingX ? (
             <p className="x-profile-status">Checking X sign-in…</p>
           ) : xProfile ? (
@@ -224,7 +224,7 @@ export function MintForm() {
             <p className="inline-error">This X account has already minted its one card.</p>
           ) : null}
 
-          <label htmlFor="gratitude-text">I’m grateful for…</label>
+          <label htmlFor="gratitude-text">03 · I’M GRATEFUL FOR…</label>
           <textarea
             autoComplete="off"
             id="gratitude-text"
@@ -235,7 +235,7 @@ export function MintForm() {
             value={text}
           />
           <div className="input-meta">
-            <span>Your text is saved onchain.</span>
+            <span>Saved onchain · max 100 bytes</span>
             <span className={textBytes > maxTextBytes ? "byte-count over-limit" : "byte-count"}>
               {textBytes}/{maxTextBytes} bytes
             </span>
@@ -284,7 +284,7 @@ export function MintForm() {
       <div className="preview-column">
         <div className="preview-heading"><span>YOUR LIVE PREVIEW</span><span>01 / 01</span></div>
         <CardArt text={text} owner={address} xUsername={xProfile?.username} avatarUrl={xProfile?.profileImageUrl} preview />
-        <p className="preview-caption">Your words and verified X profile on the original Thanksgiving card template.</p>
+        <p className="preview-caption">Live preview · Your connected X photo and wallet are added automatically.</p>
       </div>
     </section>
   );

@@ -13,7 +13,7 @@ A small Base NFT mint for one line of gratitude. Each token stores the text, the
 
 The local app defaults to Base Sepolia. For a production Cloudflare build, set `NEXT_PUBLIC_CHAIN_ID=8453`, `NEXT_PUBLIC_BASE_RPC_URL=https://mainnet.base.org`, and the deployed `NEXT_PUBLIC_CONTRACT_ADDRESS` in ignored `.env.local`. The app shows a live card preview and checks the UTF-8 byte limit. A mint needs X OAuth sign-in, a wallet signature, a server EIP-712 attestation, and one payable mint transaction. The contract allows one mint ever per wallet and per stable X account ID.
 
-The approved card template lives in public/thanksmaxxing-card-template.png. The X account owner signs in through OAuth; the app gets that account's own profile image and overlays it with their gratitude text and minted token details. Typing another person's handle cannot claim their identity. The mint records the authenticated account ID so a handle change does not create a second allowance.
+The approved card template lives in public/thanksmaxxing-card-template.webp. The X account owner signs in through OAuth; the app gets that account's own profile image and overlays it with their gratitude text and minted token details. Typing another person's handle cannot claim their identity. The mint records the authenticated account ID so a handle change does not create a second allowance. The home page can play the supplied theme track; visitors can mute it with the persistent sound control.
 
 ## Environment
 

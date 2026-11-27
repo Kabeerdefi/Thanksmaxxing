@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import { MusicToggle } from "@/components/MusicToggle";
 
 export const metadata: Metadata = {
   title: "Thanksmaxxing — a little gratitude, kept forever",
@@ -32,9 +33,12 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
                 <Link href="/wall">The wall</Link>
                 <a href="#how-it-works">How it works</a>
               </nav>
-              <a className="nav-cta" href="#mint">Make a card <span aria-hidden="true">↗</span></a>
+              <div className="nav-actions">
+                <a className="nav-cta" href="#mint">Make a card <span aria-hidden="true">↗</span></a>
+              </div>
             </header>
             {children}
+            <MusicToggle />
             <footer className="footer">
               <Link className="wordmark footer-wordmark" href="/">
                 <span className="wordmark-mark">t</span>

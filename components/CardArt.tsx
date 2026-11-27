@@ -22,6 +22,7 @@ export function CardArt({
   preview = false,
 }: CardArtProps) {
   const message = text.trim() || "Your gratitude goes here…";
+  const messageBytes = new TextEncoder().encode(message).length;
   const displayOwner = owner ? shortAddress(owner) : "0x0000…0000";
   const displayId = tokenId ? "#" + tokenId.padStart(4, "0") : "#0000";
   const handle = xUsername ? "@" + xUsername : preview ? "@yourname" : "@collector";
@@ -33,16 +34,18 @@ export function CardArt({
     >
       <Image
         className="card-template-image"
-        src="/thanksmaxxing-card-template.png"
+        src="/thanksmaxxing-card-template.webp"
         width={960}
         height={1280}
         sizes="(max-width: 650px) 100vw, 50vw"
         alt=""
         aria-hidden="true"
       />
-      <div className={"card-message-mask" + (message.length > 48 ? " card-message-long" : "")}>
+      <div className="card-message-mask">
         <p className={text.trim() ? "card-message" : "card-message card-message-placeholder"}>
-          {message}
+          <span className={messageBytes > 82 ? "card-message-small" : messageBytes > 58 ? "card-message-medium" : messageBytes > 36 ? "card-message-compact" : ""}>
+            {message}
+          </span>
         </p>
       </div>
       <div className="card-id-mask">{displayId}</div>
