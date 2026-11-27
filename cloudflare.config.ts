@@ -22,7 +22,6 @@ export default defineConfig(({ mode }) => {
         NEXT_PUBLIC_CONTRACT_ADDRESS: bindings.text(value("NEXT_PUBLIC_CONTRACT_ADDRESS")),
         NEXT_PUBLIC_DEPLOYMENT_BLOCK: bindings.text(value("NEXT_PUBLIC_DEPLOYMENT_BLOCK")),
         X_CLIENT_ID: bindings.secret(),
-        X_CALLBACK_URL: bindings.secret(),
         NEXT_PUBLIC_SITE_URL: bindings.text(value("NEXT_PUBLIC_SITE_URL")),
         X_ATTESTOR_ADDRESS: bindings.text(value("X_ATTESTOR_ADDRESS")),
         X_CLIENT_SECRET: bindings.secret(),
