@@ -10,6 +10,8 @@ export default defineConfig(({ mode }) => {
       name: "thanksmaxxing",
       entrypoint: "vinext/server/fetch-handler",
       compatibilityDate: "2026-11-26",
+      workersDev: true,
+      previewUrls: false,
       assets: {
         htmlHandling: "none",
         notFoundHandling: "none",
