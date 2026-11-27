@@ -18,7 +18,7 @@ import { targetChain } from "@/config/wagmi";
 import { CardArt } from "@/components/CardArt";
 import { WalletButton } from "@/components/WalletButton";
 
-const maxTextBytes = 1000;
+const maxTextBytes = 600;
 
 type XProfile = {
   id: string;
@@ -253,14 +253,14 @@ export function MintForm() {
           <textarea
             autoComplete="off"
             id="gratitude-text"
-            maxLength={1000}
+            maxLength={600}
             onChange={(event) => setText(event.target.value)}
             placeholder="the people who show up"
             rows={3}
             value={text}
           />
           <div className="input-meta">
-            <span>Saved onchain · max 1000 bytes</span>
+            <span>Saved onchain · max 600 bytes</span>
             <span className={textBytes > maxTextBytes ? "byte-count over-limit" : "byte-count"}>
               {textBytes}/{maxTextBytes} bytes
             </span>

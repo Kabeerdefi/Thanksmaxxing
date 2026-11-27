@@ -43,7 +43,7 @@ export function CardArt({
       />
       <div className="card-message-mask">
         <p className={text.trim() ? "card-message" : "card-message card-message-placeholder"}>
-          <span className={messageBytes > 82 ? "card-message-small" : messageBytes > 58 ? "card-message-medium" : messageBytes > 36 ? "card-message-compact" : ""}>
+          <span className={messageBytes > 260 ? "card-message-tiny" : messageBytes > 82 ? "card-message-small" : messageBytes > 58 ? "card-message-medium" : messageBytes > 36 ? "card-message-compact" : ""}>
             {message}
           </span>
         </p>

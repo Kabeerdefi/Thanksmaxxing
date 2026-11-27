@@ -83,7 +83,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     const imageData = Buffer.from(await templateResponse.arrayBuffer()).toString("base64");
     const imageSrc = "data:image/webp;base64," + imageData;
     const textBytes = new TextEncoder().encode(text).length;
-    const messageFontSize = textBytes > 82 ? 27 : textBytes > 58 ? 32 : textBytes > 36 ? 36 : 49;
+    const messageFontSize = textBytes > 260 ? 20 : textBytes > 82 ? 27 : textBytes > 58 ? 32 : textBytes > 36 ? 36 : 49;
     const element = createElement(
       "div",
       {
@@ -169,10 +169,10 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
         {
           style: {
             position: "absolute",
-            left: "106px",
-            top: "1006px",
-            width: "242px",
-            height: "58px",
+            left: "108px",
+            top: "991px",
+            width: "269px",
+            height: "78px",
             boxSizing: "border-box",
             display: "flex",
             alignItems: "center",

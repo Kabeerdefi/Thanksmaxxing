@@ -81,7 +81,7 @@ export async function renderCardBlob({
   // Gratitude message (9.4%, 28.5%, 71.5%, 19.5%)
   const message = text.trim() || "Your gratitude goes here…";
   const bytes = new TextEncoder().encode(message).length;
-  const fontSize = bytes > 82 ? 27.36 : bytes > 58 ? 31.68 : bytes > 36 ? 36 : 49.44;
+  const fontSize = bytes > 260 ? 19.68 : bytes > 82 ? 27.36 : bytes > 58 ? 31.68 : bytes > 36 ? 36 : 49.44;
   const lineHeight = fontSize * (bytes > 82 ? 1.08 : 1.06);
   ctx.save();
   ctx.fillStyle = "#0923ad";
@@ -103,12 +103,12 @@ export async function renderCardBlob({
   });
   ctx.restore();
 
-  // Tilted ticket ID (#0000) centered around (23.6%, 80.85%) rotated -5.2deg
+  // Tilted ticket ID (#0000) centered around (25.2%, 80.45%) rotated -5.2deg
   ctx.save();
-  const idCenterX = width * 0.236;
-  const idCenterY = height * 0.8085;
-  const idW = width * 0.252;
-  const idH = height * 0.045;
+  const idCenterX = width * 0.252;
+  const idCenterY = height * 0.8045;
+  const idW = width * 0.28;
+  const idH = height * 0.061;
   ctx.translate(idCenterX, idCenterY);
   ctx.rotate((-5.2 * Math.PI) / 180);
   ctx.fillStyle = "#f7f4ef";
