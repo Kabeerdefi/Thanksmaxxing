@@ -14,7 +14,7 @@ contract Thanksmaxxing is ERC721, Ownable2Step, ReentrancyGuard, Pausable, EIP71
     using Strings for uint256;
 
     uint256 public mintPrice;
-    uint256 public constant MAX_TEXT_BYTES = 100;
+    uint256 public constant MAX_TEXT_BYTES = 1000;
     uint256 public nextId = 1;
     uint256 public constant MAX_AUTHORIZATION_LIFETIME = 10 minutes;
 
