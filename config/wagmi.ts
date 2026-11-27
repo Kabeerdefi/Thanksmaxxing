@@ -1,5 +1,5 @@
 import { base, baseSepolia } from "wagmi/chains";
-import { injected } from "wagmi/connectors";
+import { coinbaseWallet, injected } from "wagmi/connectors";
 import { cookieStorage, createConfig, createStorage, http } from "wagmi";
 
 export const targetChain =
@@ -11,7 +11,14 @@ const rpcUrl =
 
 export const wagmiConfig = createConfig({
   chains: [baseSepolia, base],
-  connectors: [injected()],
+  connectors: [
+    injected(),
+    coinbaseWallet({
+      appName: "Thanksmaxxing",
+      preference: "all",
+    }),
+  ],
+  multiInjectedProviderDiscovery: true,
   storage: createStorage({ storage: cookieStorage }),
   ssr: true,
   transports: {

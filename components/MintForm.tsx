@@ -32,6 +32,7 @@ export function MintForm() {
   const [text, setText] = useState("");
   const [xProfile, setXProfile] = useState<XProfile | null>(null);
   const [isLoadingX, setIsLoadingX] = useState(true);
+  const [ethUsd, setEthUsd] = useState<number | null>(null);
   const [isAttesting, setIsAttesting] = useState(false);
   const [flowError, setFlowError] = useState("");
   const router = useRouter();
@@ -85,6 +86,12 @@ export function MintForm() {
   const isConfigured = Boolean(contractAddress);
   const isWrongNetwork = isConnected && chainId !== targetChain.id;
   const priceLabel = mintPrice === undefined ? "Set after deployment" : formatEther(mintPrice) + " ETH";
+  const usdWorth = useMemo(() => {
+    if (mintPrice === undefined || ethUsd === null) return null;
+    const usd = Number(formatEther(mintPrice)) * ethUsd;
+    if (!Number.isFinite(usd)) return null;
+    return usd < 0.01 ? "≈ $" + usd.toFixed(4) + " USD" : "≈ $" + usd.toFixed(2) + " USD";
+  }, [mintPrice, ethUsd]);
   const hasAlreadyMinted = walletMinted === true || xAccountMinted === true;
 
   useEffect(() => {
@@ -92,12 +99,26 @@ export function MintForm() {
     fetch("/api/auth/x/session", { cache: "no-store" })
       .then(async (response) => (await response.json()) as { connected?: boolean; profile?: XProfile })
       .then((result) => {
-        if (active && result.connected && result.profile) setXProfile(result.profile);
+        if (!active) return;
+        if (result.connected && result.profile) {
+          setXProfile(result.profile);
+          return;
+        }
+        const xErr = new URLSearchParams(window.location.search).get("x_error");
+        if (xErr) {
+          setFlowError("X sign-in failed (" + xErr + "). Please try again.");
+        }
       })
       .catch(() => undefined)
       .finally(() => {
         if (active) setIsLoadingX(false);
       });
+    fetch("/api/eth-price")
+      .then(async (response) => (await response.json()) as { usd?: number | null })
+      .then((result) => {
+        if (active && typeof result.usd === "number" && result.usd > 0) setEthUsd(result.usd);
+      })
+      .catch(() => undefined);
     return () => { active = false; };
   }, []);
 
@@ -191,7 +212,11 @@ export function MintForm() {
 
         <div className="mint-stats">
           <div><strong>{isConfigured ? mintCount : "—"}</strong><span>cards minted</span></div>
-          <div><strong>{priceLabel}</strong><span>one-time mint on Base</span></div>
+          <div>
+            <strong>{priceLabel}</strong>
+            {usdWorth ? <em className="mint-price-usd">{usdWorth}</em> : null}
+            <span>one-time mint on Base</span>
+          </div>
         </div>
 
         <div className="wallet-panel">

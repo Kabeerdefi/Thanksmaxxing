@@ -50,14 +50,16 @@ export function CardArt({
       </div>
       <div className="card-id-mask">{displayId}</div>
       {avatarUrl ? (
-        <span className="card-avatar-slot">
-          <Image
-            src={avatarUrl}
-            alt={xUsername ? "X profile photo for @" + xUsername : "X profile photo"}
-            fill
-            sizes="84px"
-            unoptimized
-          />
+        <span className="card-avatar-mask">
+          <span className="card-avatar-slot">
+            <Image
+              src={avatarUrl}
+              alt={xUsername ? "X profile photo for @" + xUsername : "X profile photo"}
+              fill
+              sizes="84px"
+              unoptimized
+            />
+          </span>
         </span>
       ) : null}
       <div className="card-owner-mask">

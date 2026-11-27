@@ -24,9 +24,38 @@ export function MusicToggle() {
     audio.volume = 0.3;
     setIsMuted(muted);
 
-    void audio.play()
-      .then(() => setIsPlaying(true))
-      .catch(() => setIsPlaying(false));
+    const events = ["pointerdown", "touchstart", "keydown", "click"] as const;
+    const detachUnlock = () => {
+      events.forEach((evt) => window.removeEventListener(evt, unlockOnFirstGesture, true));
+    };
+
+    const tryPlay = () =>
+      audio
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+          detachUnlock();
+        })
+        .catch(() => {
+          setIsPlaying(false);
+        });
+
+    function unlockOnFirstGesture() {
+      if (!audio || audio.muted) return;
+      void tryPlay();
+    }
+
+    if (!muted) {
+      void audio.play().then(
+        () => setIsPlaying(true),
+        () => {
+          setIsPlaying(false);
+          events.forEach((evt) => window.addEventListener(evt, unlockOnFirstGesture, true));
+        },
+      );
+    }
+
+    return detachUnlock;
   }, []);
 
   async function toggleSound() {

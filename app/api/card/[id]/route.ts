@@ -11,7 +11,7 @@ function shortAddress(address: string) {
   return address.slice(0, 6) + "…" + address.slice(-4);
 }
 
-export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   if (!/^[1-9][0-9]*$/.test(id) || !contractAddress) {
     return new Response("Card not found", { status: contractAddress ? 404 : 503 });
@@ -74,13 +74,16 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
         avatarSrc = undefined;
       }
     }
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const templateResponse = await fetch(new URL("/thanksmaxxing-card-template.webp", siteUrl), { cache: "no-store" });
+    const requestOrigin = new URL(request.url).origin;
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || requestOrigin;
+    const templateResponse = await fetch(new URL("/thanksmaxxing-card-template.webp", requestOrigin), {
+      cache: "no-store",
+    }).catch(() => fetch(new URL("/thanksmaxxing-card-template.webp", siteUrl), { cache: "no-store" }));
     if (!templateResponse.ok) throw new Error("Card template not found.");
     const imageData = Buffer.from(await templateResponse.arrayBuffer()).toString("base64");
     const imageSrc = "data:image/webp;base64," + imageData;
     const textBytes = new TextEncoder().encode(text).length;
-    const messageFontSize = textBytes > 82 ? 29 : textBytes > 58 ? 35 : textBytes > 36 ? 42 : 50;
+    const messageFontSize = textBytes > 82 ? 27 : textBytes > 58 ? 32 : textBytes > 36 ? 36 : 49;
     const element = createElement(
       "div",
       {
@@ -99,34 +102,48 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
         style: { position: "absolute", left: "0", top: "0", width: "960px", height: "1280px" },
       }),
       avatarSrc
-        ? createElement("img", {
-            src: avatarSrc,
-            width: "84",
-            height: "84",
-            style: {
-              position: "absolute",
-              left: "80px",
-              top: "1135px",
-              width: "84px",
-              height: "84px",
-              borderRadius: "50%",
-              objectFit: "cover",
+        ? createElement(
+            "div",
+            {
+              style: {
+                position: "absolute",
+                left: "86px",
+                top: "1133px",
+                width: "81px",
+                height: "83px",
+                borderRadius: "16px",
+                backgroundColor: "#f8f1ef",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              },
             },
-          })
+            createElement("img", {
+              src: avatarSrc,
+              width: "78",
+              height: "78",
+              style: {
+                width: "78px",
+                height: "78px",
+                borderRadius: "50%",
+                border: "3px solid #142dce",
+                objectFit: "cover",
+              },
+            }),
+          )
         : null,
       createElement(
         "div",
         {
           style: {
             position: "absolute",
-            left: "84px",
-            top: "370px",
-            width: "566px",
-            height: "264px",
+            left: "90px",
+            top: "365px",
+            width: "686px",
+            height: "250px",
             boxSizing: "border-box",
             display: "flex",
             alignItems: "flex-start",
-            padding: "12px 10px",
             overflow: "hidden",
           },
         },
@@ -139,9 +156,9 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
               fontSize: messageFontSize,
               fontWeight: 700,
               fontStyle: "italic",
-              lineHeight: 1.03,
+              lineHeight: 1.06,
               letterSpacing: "-1.3px",
-              overflowWrap: "anywhere",
+              wordBreak: "break-word",
             },
           },
           text,
@@ -152,18 +169,20 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
         {
           style: {
             position: "absolute",
-            left: "90px",
-            top: "1010px",
-            width: "270px",
-            height: "60px",
+            left: "106px",
+            top: "1006px",
+            width: "242px",
+            height: "58px",
             boxSizing: "border-box",
             display: "flex",
             alignItems: "center",
-            paddingLeft: "8px",
-            backgroundColor: "#fff8eb",
+            paddingLeft: "10px",
+            borderRadius: "4px",
+            transform: "rotate(-5.2deg)",
+            backgroundColor: "#f7f4ef",
             color: "#0923ad",
             fontFamily: "Arial, Helvetica, sans-serif",
-            fontSize: "48px",
+            fontSize: "49px",
             fontWeight: 900,
             letterSpacing: "-2px",
           },
@@ -175,29 +194,29 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
         {
           style: {
             position: "absolute",
-            left: "176px",
-            top: "1138px",
-            width: "183px",
-            height: "70px",
+            left: "184px",
+            top: "1140px",
+            width: "216px",
+            height: "69px",
             boxSizing: "border-box",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            gap: "5px",
-            paddingLeft: "8px",
+            gap: "4px",
+            paddingLeft: "6px",
             overflow: "hidden",
-            backgroundColor: "#fff8eb",
+            backgroundColor: "#f8f1ef",
             color: "#0923ad",
             fontFamily: "Arial, Helvetica, sans-serif",
           },
         },
-        createElement("div", { style: { fontSize: "17px", fontWeight: 800, lineHeight: 1 } }, "@" + xUsername),
+        createElement("div", { style: { fontSize: "20px", fontWeight: 800, lineHeight: 1 } }, "@" + xUsername),
         createElement(
           "div",
           {
             style: {
               fontFamily: "Courier New, monospace",
-              fontSize: "18px",
+              fontSize: "17px",
               lineHeight: 1.1,
             },
           },
@@ -206,7 +225,14 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
       ),
     );
 
-    return new ImageResponse(element, { width: 960, height: 1280 });
+    const download = new URL(request.url).searchParams.get("download") === "1";
+    return new ImageResponse(element, {
+      width: 960,
+      height: 1280,
+      headers: download
+        ? { "Content-Disposition": `attachment; filename="thanksmaxxing-${id}.png"` }
+        : undefined,
+    });
   } catch {
     return new Response("Card not found", { status: 404 });
   }

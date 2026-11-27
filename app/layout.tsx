@@ -26,7 +26,6 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           <div className="site-shell">
             <header className="topbar">
               <Link className="wordmark" href="/" aria-label="Thanksmaxxing home">
-                <span className="wordmark-mark">t</span>
                 <span>thanksmaxxing</span>
               </Link>
               <nav className="nav-links" aria-label="Main navigation">
@@ -41,7 +40,6 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             <MusicToggle />
             <footer className="footer">
               <Link className="wordmark footer-wordmark" href="/">
-                <span className="wordmark-mark">t</span>
                 <span>thanksmaxxing</span>
               </Link>
               <span>One small thank-you, kept forever.</span>

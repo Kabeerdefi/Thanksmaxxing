@@ -1,13 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { useReadContract } from "wagmi";
 import Link from "next/link";
 import { CardArt } from "@/components/CardArt";
 import { contractAddress, explorerUrl, thanksmaxxingAbi } from "@/config/contract";
 import { targetChain } from "@/config/wagmi";
+import { downloadCardPng } from "@/lib/card-export";
 
 export function TokenView({ tokenId }: { tokenId: string }) {
   const id = BigInt(tokenId);
+  const [isDownloading, setIsDownloading] = useState(false);
   const { data: text, isLoading } = useReadContract({
     address: contractAddress,
     abi: thanksmaxxingAbi,
@@ -57,6 +60,23 @@ export function TokenView({ tokenId }: { tokenId: string }) {
     "&url=" +
     encodeURIComponent(pageUrl);
 
+  async function handleDownload() {
+    if (!text || !owner || isDownloading) return;
+    setIsDownloading(true);
+    try {
+      await downloadCardPng({ text, tokenId, owner, xUsername, avatarUrl });
+    } catch {
+      const link = document.createElement("a");
+      link.href = "/api/card/" + tokenId + "?download=1";
+      link.download = "thanksmaxxing-" + tokenId + ".png";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } finally {
+      setIsDownloading(false);
+    }
+  }
+
   return (
     <main className="token-page">
       <div className="token-title">
@@ -71,9 +91,9 @@ export function TokenView({ tokenId }: { tokenId: string }) {
         tokenId={tokenId}
       />
       <div className="token-actions">
-        <a className="button button-primary" href={"/api/card/" + tokenId} download={"thanksmaxxing-" + tokenId + ".png"}>
-          Download PNG <span aria-hidden="true">↓</span>
-        </a>
+        <button className="button button-primary" disabled={isDownloading} onClick={handleDownload} type="button">
+          {isDownloading ? "Preparing PNG…" : "Download PNG"} <span aria-hidden="true">↓</span>
+        </button>
         <a className="button button-secondary" href={shareUrl} target="_blank" rel="noreferrer">
           Share on X <span aria-hidden="true">↗</span>
         </a>
