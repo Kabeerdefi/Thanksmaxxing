@@ -15,11 +15,12 @@ type XUserResponse = {
   data?: { id?: string; username?: string; profile_image_url?: string };
 };
 
-function returnToSite(request: Request, status: "connected" | "error") {
+function returnToSite(request: Request, status: "connected" | "error", reason?: string) {
   const site = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
   const url = new URL("/", site);
   url.hash = "mint";
   url.searchParams.set("x", status);
+  if (reason) url.searchParams.set("x_error", reason);
   return NextResponse.redirect(url);
 }
 
@@ -27,22 +28,22 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
   const returnedState = requestUrl.searchParams.get("state");
+  if (requestUrl.searchParams.has("error")) return returnToSite(request, "error", "authorization_denied");
   const jar = await cookies();
   const flow = openCookie<OAuthFlow>(jar.get(xFlowCookie)?.value);
   const clientId = process.env.X_CLIENT_ID;
   const clientSecret = process.env.X_CLIENT_SECRET;
-  const response = returnToSite(request, "error");
-  response.cookies.set(xFlowCookie, "", cookieOptions(0));
+  const fail = (reason: string) => {
+    const response = returnToSite(request, "error", reason);
+    response.cookies.set(xFlowCookie, "", cookieOptions(0));
+    return response;
+  };
 
-  if (
-    !code ||
-    !returnedState ||
-    !flow ||
-    flow.exp <= Math.floor(Date.now() / 1000) ||
-    returnedState !== flow.state ||
-    !clientId ||
-    !clientSecret
-  ) return response;
+  if (!code) return fail("missing_code");
+  if (!returnedState || !flow || flow.exp <= Math.floor(Date.now() / 1000) || returnedState !== flow.state) {
+    return fail("flow_state");
+  }
+  if (!clientId || !clientSecret) return fail("oauth_config");
 
   try {
     const body = new URLSearchParams({
@@ -60,15 +61,15 @@ export async function GET(request: Request) {
       body,
       cache: "no-store",
     });
-    if (!tokenResponse.ok) return response;
+    if (!tokenResponse.ok) return fail(`token_http_${tokenResponse.status}`);
     const token = (await tokenResponse.json()) as { access_token?: string };
-    if (!token.access_token) return response;
+    if (!token.access_token) return fail("token_missing");
 
     const userResponse = await fetch("https://api.x.com/2/users/me?user.fields=profile_image_url", {
       headers: { Authorization: "Bearer " + token.access_token },
       cache: "no-store",
     });
-    if (!userResponse.ok) return response;
+    if (!userResponse.ok) return fail(`profile_http_${userResponse.status}`);
     const payload = (await userResponse.json()) as XUserResponse;
     const user = payload.data;
     if (
@@ -78,23 +79,19 @@ export async function GET(request: Request) {
       !/^[A-Za-z0-9_]{1,15}$/.test(user.username) ||
       !user.profile_image_url ||
       !/^https:\/\/pbs\.twimg\.com\/profile_images\//.test(user.profile_image_url)
-    ) return response;
+    ) return fail("profile_shape");
 
-    response.cookies.set(
-      xSessionCookie,
-      sealCookie({
+    const session = sealCookie({
         id: user.id,
         username: user.username,
         profileImageUrl: user.profile_image_url,
         exp: Math.floor(Date.now() / 1000) + 86400,
-      }),
-      cookieOptions(86400),
-    );
+      });
     const destination = returnToSite(request, "connected");
     destination.cookies.set(xFlowCookie, "", cookieOptions(0));
-    destination.cookies.set(xSessionCookie, response.cookies.get(xSessionCookie)!.value, cookieOptions(86400));
+    destination.cookies.set(xSessionCookie, session, cookieOptions(86400));
     return destination;
   } catch {
-    return response;
+    return fail("callback_internal");
   }
 }
